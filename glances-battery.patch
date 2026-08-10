@@ -1,0 +1,17 @@
+--- glances_batpercent.py	2026-08-11 01:00:00.000000000 +0900
++++ glances_batpercent.py	2026-08-11 01:00:00.000000000 +0900
+@@ -24,7 +24,10 @@
+ # PsUtil Sensors_battery available on Linux, Windows, FreeBSD, macOS
+ psutil_tag = True
+-try:
+-    psutil.sensors_battery()
+-except Exception as e:
+-    logger.error(f"Cannot grab battery status {e}.")
++if not hasattr(psutil, 'sensors_battery'):
+     psutil_tag = False
++else:
++    try:
++        psutil.sensors_battery()
++    except Exception as e:
++        logger.error(f"Cannot grab battery status {e}.")
++        psutil_tag = False

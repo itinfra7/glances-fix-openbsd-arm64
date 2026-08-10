@@ -1,0 +1,24 @@
+#!/bin/ksh
+set -u
+
+# This wrapper preserves the package launcher for real terminals.
+real=/usr/local/libexec/glances-package
+
+if [ ! -x "$real" ]; then
+    print -u2 "glances package launcher is missing: $real"
+    exit 127
+fi
+
+if [ -t 0 ] && [ -t 1 ]; then
+    exec "$real" "$@"
+fi
+
+# Non-TTY execution cannot initialize curses, so preserve explicit non-UI modes.
+case " $* " in
+    *" --stdout"*|*" --stdout-json"*|*" --stdout-csv"*|*" --fetch"*|*" --help"*|*" -h"*|*" --version"*|*" -V"*|*" --issue"*|*" --modules-list"*|*" --module-list"*|*" --api-doc"*|*" --api-restful-doc"*|*" --webserver"*|*" -w"*|*" --server"*|*" -s"*|*" --client"*|*" -c"*|*" --browser"*)
+        exec "$real" "$@"
+        ;;
+esac
+
+# Plain non-TTY calls return one useful snapshot instead of raising cbreak().
+exec "$real" --stdout now,cpu,mem,load --stop-after 1 "$@"

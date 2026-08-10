@@ -1,0 +1,11 @@
+--- _psbsd.py	2026-08-11 01:00:00.000000000 +0900
++++ _psbsd.py	2026-08-11 01:00:00.000000000 +0900
+@@ -643,7 +643,7 @@
+     def cmdline(self):
+         if OPENBSD and self.pid == 0:
+             return []  # ...else it crashes
+-        elif NETBSD:
++        elif NETBSD or OPENBSD:
+             # XXX - most of the times the underlying sysctl() call on
+             # NetBSD and OpenBSD returns a truncated string. Also
+             # /proc/pid/cmdline behaves the same so it looks like a
